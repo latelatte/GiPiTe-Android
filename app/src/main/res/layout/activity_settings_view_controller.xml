@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/apiKeyTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="APIキーを入力"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/apiKeyURLLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="APIキーはこちらから取得できます:\nhttps://openai.com/index/openai-api/" />
+
+        <Button
+            android:id="@+id/pasteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ペースト" />
+
+        <EditText
+            android:id="@+id/gptNameTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="GPTの名前を入力" />
+
+        <TextView
+            android:id="@+id/gptSettingsLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GPTの設定を入力" />
+
+        <EditText
+            android:id="@+id/gptSettingsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:inputType="textMultiLine" />
+
+        <LinearLayout
+            android:id="@+id/buttonContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/gpt4Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GPT-4o" />
+
+            <Button
+                android:id="@+id/gpt35Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GPT-3.5-turbo" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存" />
+
+        <Button
+            android:id="@+id/clearButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="クリア" />
+
+        <Button
+            android:id="@+id/loadPresetButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="プリセットをロード/削除" />
+
+        <Button
+            android:id="@+id/savePresetButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="プリセットを保存" />
+    </LinearLayout>
+</ScrollView>
