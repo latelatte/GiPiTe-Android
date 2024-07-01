@@ -7,15 +7,27 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="ai.latelatte.gipite.HomeFragment"
-        android:label="Home" />
+        android:textStyle="bold"
+        android:label="Home">
+        <action
+            android:id="@+id/action_settings_to_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_history"
         android:name="ai.latelatte.gipite.ConversationHistoryFragment"
+        android:textStyle="bold"
         android:label="History" />
 
     <fragment
-        android:id="@+id/navigation_settings"
-        android:name="ai.latelatte.gipite.SettingsFragment"
-        android:label="Settings" />
+    android:id="@+id/navigation_settings"
+    android:name="ai.latelatte.gipite.SettingsFragment"
+        android:textStyle="bold"
+    android:label="Settings">
+    <action
+        android:id="@+id/action_settings_to_home"
+        app:destination="@id/navigation_home" />
+    </fragment>
+
 </navigation>
