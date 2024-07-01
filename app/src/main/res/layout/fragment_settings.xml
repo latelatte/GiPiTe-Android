@@ -1,6 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".SettingsFragment">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/apiKeyTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="API Key" />
+
+        <EditText
+            android:id="@+id/gptNameTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="GPT Name" />
+
+        <EditText
+            android:id="@+id/gptSettingsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="System Message" />
+
+        <LinearLayout
+            android:id="@+id/buttonContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:paddingTop="16dp">
+
+            <Button
+                android:id="@+id/gpt4Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GPT-4" />
+
+            <Button
+                android:id="@+id/gpt35Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GPT-3.5" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/pasteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paste API Key" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Settings" />
+
+        <Button
+            android:id="@+id/clearButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clear Settings" />
+
+        <Button
+            android:id="@+id/loadPresetButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Load Preset" />
+
+        <Button
+            android:id="@+id/savePresetButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Preset" />
+    </LinearLayout>
+</ScrollView>

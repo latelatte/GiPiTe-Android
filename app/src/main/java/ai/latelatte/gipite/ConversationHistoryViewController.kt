@@ -1,9 +1,7 @@
 package ai.latelatte.gipite
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
@@ -35,6 +33,10 @@ class ConversationHistoryViewController : AppCompatActivity() {
         }
 
         listView.setOnItemLongClickListener { parent, view, position, id ->
+            if (!isSelecting) {
+                isSelecting = true
+                invalidateOptionsMenu()
+            }
             toggleSelection(position)
             true
         }
@@ -43,24 +45,27 @@ class ConversationHistoryViewController : AppCompatActivity() {
     }
 
     private fun loadConversationFiles() {
-        val documentsDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+        val documentsDir = getExternalFilesDir(null) // You might want to specify a sub-directory if needed
         conversationFiles = documentsDir?.listFiles { file ->
             file.extension == "txt"
         }?.toMutableList() ?: mutableListOf()
 
         val fileNames = conversationFiles.map { it.nameWithoutExtension }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, fileNames)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, fileNames)
         listView.adapter = adapter
+        listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
     }
 
     private fun toggleSelection(position: Int) {
         val file = conversationFiles[position]
         if (selectedFiles.contains(file)) {
             selectedFiles.remove(file)
+            listView.setItemChecked(position, false)
         } else {
             selectedFiles.add(file)
+            listView.setItemChecked(position, true)
         }
-        listView.invalidateViews() // Refresh the list to show selection
+        invalidateOptionsMenu()
     }
 
     private fun openConversationDetail(file: File) {
@@ -68,7 +73,6 @@ class ConversationHistoryViewController : AppCompatActivity() {
         intent.putExtra("fileURL", file.absolutePath)
         startActivity(intent)
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_conversation_history, menu)
@@ -87,7 +91,6 @@ class ConversationHistoryViewController : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_select -> {
                 isSelecting = true
-                selectedFiles.clear()
                 invalidateOptionsMenu()
                 true
             }
@@ -103,7 +106,7 @@ class ConversationHistoryViewController : AppCompatActivity() {
                 isSelecting = false
                 selectedFiles.clear()
                 invalidateOptionsMenu()
-                listView.invalidateViews()
+                listView.clearChoices()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -129,7 +132,7 @@ class ConversationHistoryViewController : AppCompatActivity() {
         isSelecting = false
         selectedFiles.clear()
         invalidateOptionsMenu()
-        listView.invalidateViews()
+        listView.clearChoices()
     }
 
     private fun showRenameAlert(file: File) {

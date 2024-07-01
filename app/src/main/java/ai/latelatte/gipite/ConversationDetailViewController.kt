@@ -62,9 +62,8 @@ class ConversationDetailViewController : AppCompatActivity() {
         try {
             val jsonData = jsonFileURL.readText()
             val loadedHistory: List<Map<String, String>> = Gson().fromJson(jsonData, object : TypeToken<List<Map<String, String>>>() {}.type)
-            // MainActivity (ViewController) にアクセスして appendToConversationHistory メソッドを呼び出す
+            // MainActivity (ViewController) にアクセスして restoreTextOutput メソッドを呼び出す
             val mainActivity = MainActivity.instance
-            mainActivity?.appendToConversationHistory(loadedHistory)
             mainActivity?.restoreTextOutput(fileURL)
             finish()
         } catch (e: Exception) {
