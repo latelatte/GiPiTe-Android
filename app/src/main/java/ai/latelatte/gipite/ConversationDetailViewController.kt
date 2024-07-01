@@ -1,5 +1,6 @@
 package ai.latelatte.gipite
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
@@ -62,9 +63,14 @@ class ConversationDetailViewController : AppCompatActivity() {
         try {
             val jsonData = jsonFileURL.readText()
             val loadedHistory: List<Map<String, String>> = Gson().fromJson(jsonData, object : TypeToken<List<Map<String, String>>>() {}.type)
-            // MainActivity (ViewController) にアクセスして restoreTextOutput メソッドを呼び出す
-            val mainActivity = MainActivity.instance
-            mainActivity?.restoreTextOutput(fileURL)
+
+            // MainActivity にデータを渡すためのインテントを作成
+            val intent = Intent(this, MainActivity::class.java).apply {
+                putExtra("conversationHistory", jsonData)
+                putExtra("fileURL", fileURL.absolutePath)
+                putExtra("restoreFlag", true)
+            }
+            startActivity(intent)
             finish()
         } catch (e: Exception) {
             showAlert("読み込みエラー", "会話履歴の読み込みに失敗しました: ${e.message}")
