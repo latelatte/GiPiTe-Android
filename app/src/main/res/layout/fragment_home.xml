@@ -48,8 +48,9 @@
 
     <Button
         android:id="@+id/saveConversationButton"
-        android:layout_width="match_parent"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:backgroundTint="@color/buttonColor"
         android:background="@drawable/rounded_button"
         android:textColor="@color/buttonTextColor"

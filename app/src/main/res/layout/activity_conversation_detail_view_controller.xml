@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorSecondary">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -23,5 +24,9 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/buttonColor"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/buttonTextColor"
+        android:textStyle="bold"
         android:text="この会話を続ける" />
 </RelativeLayout>

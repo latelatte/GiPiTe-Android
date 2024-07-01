@@ -16,4 +16,7 @@
     <color name="buttonTextColor">#333333</color>
     <color name="nav_item_color_selected">#FFFFFF</color>
     <color name="nav_item_color_unselected">#333333</color>
+    <color name="editor_purple">#7D83B4</color>
+    <color name="editor_pink">#D593A1</color>
+    <color name="editor_green">#AED8D5</color>
 </resources>
