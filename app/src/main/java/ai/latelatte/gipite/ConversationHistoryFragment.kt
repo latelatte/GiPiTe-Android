@@ -19,7 +19,8 @@ class ConversationHistoryFragment : Fragment() {
     private lateinit var conversationFiles: MutableList<File>
     private var isSelecting = false
     private var selectedFiles: MutableList<File> = mutableListOf()
-    private lateinit var fab: FloatingActionButton
+    private lateinit var fabSelectMode: FloatingActionButton
+    private lateinit var fabDelete: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,7 +28,8 @@ class ConversationHistoryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_conversation_history, container, false)
         listView = view.findViewById(R.id.conversationHistoryListView)
-        fab = view.findViewById(R.id.fab_select_mode)
+        fabSelectMode = view.findViewById(R.id.fab_select_mode)
+        fabDelete = view.findViewById(R.id.fab_delete)
 
         listView.setOnItemClickListener { _, _, position, _ ->
             if (isSelecting) {
@@ -42,12 +44,16 @@ class ConversationHistoryFragment : Fragment() {
             true
         }
 
-        fab.setOnClickListener {
+        fabSelectMode.setOnClickListener {
             if (isSelecting) {
                 exitSelectionMode()
             } else {
                 enterSelectionMode()
             }
+        }
+
+        fabDelete.setOnClickListener {
+            confirmDeleteSelectedFiles()
         }
 
         loadConversationFiles()
@@ -76,7 +82,7 @@ class ConversationHistoryFragment : Fragment() {
             selectedFiles.add(file)
             listView.setItemChecked(position, true)
         }
-        activity?.invalidateOptionsMenu()
+        updateFabDeleteVisibility()
     }
 
     private fun openConversationDetail(file: File) {
@@ -87,40 +93,30 @@ class ConversationHistoryFragment : Fragment() {
 
     private fun enterSelectionMode() {
         isSelecting = true
-        fab.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+        fabSelectMode.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+        fabDelete.visibility = View.VISIBLE
         listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-        activity?.invalidateOptionsMenu()
     }
 
     private fun exitSelectionMode() {
         isSelecting = false
         selectedFiles.clear()
-        fab.setImageResource(android.R.drawable.ic_menu_agenda)
+        fabSelectMode.setImageResource(android.R.drawable.ic_menu_agenda)
+        fabDelete.visibility = View.GONE
         listView.clearChoices()
         listView.choiceMode = ListView.CHOICE_MODE_NONE
-        activity?.invalidateOptionsMenu()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_conversation_history, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.action_delete)?.isVisible = isSelecting && selectedFiles.isNotEmpty()
-        super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_delete -> {
-                confirmDeleteSelectedFiles()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+    private fun updateFabDeleteVisibility() {
+        fabDelete.visibility = if (selectedFiles.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun confirmDeleteSelectedFiles() {
+        if (selectedFiles.isEmpty()) {
+            Toast.makeText(requireContext(), "削除するファイルを選択してください", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         AlertDialog.Builder(requireContext())
             .setTitle("確認")
             .setMessage("選択したファイルを削除してもよろしいですか？")

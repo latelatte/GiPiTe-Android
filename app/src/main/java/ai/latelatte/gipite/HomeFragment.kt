@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
     private lateinit var textOutput: TextView
     private lateinit var saveConversationButton: Button
     private lateinit var textToSpeech: TextToSpeech
+    private lateinit var scrollView: ScrollView
     private var recognizedText: String = ""
     private var conversationHistory: MutableList<Map<String, String>> = mutableListOf()
     private var isConversationActive = false
@@ -64,6 +66,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         statusLabel = view.findViewById(R.id.statusLabel)
         textOutput = view.findViewById(R.id.textOutput)
         saveConversationButton = view.findViewById(R.id.saveConversationButton)
+        scrollView = view.findViewById(R.id.scrollView)
 
         textToSpeech = TextToSpeech(context, this)
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
@@ -81,6 +84,17 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
 
         saveConversationButton.setOnClickListener {
             promptForFileNameAndSave()
+        }
+
+        // 会話履歴がある場合に復元
+        val conversationHistoryJson = activity?.intent?.getStringExtra("conversationHistory")
+        val filePath = activity?.intent?.getStringExtra("fileURL")
+        val restoreFlag = activity?.intent?.getBooleanExtra("restoreFlag", false) ?: false
+
+        if (restoreFlag && conversationHistoryJson != null && filePath != null) {
+            restoreConversation(conversationHistoryJson, filePath)
+        } else {
+            initializeConversationHistory()
         }
 
         return view
@@ -130,8 +144,12 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         if (!isConversationActive) {
             isConversationActive = true
             loadSettings()
-            textOutput.text = "ここに会話が記録されます\n"
-            initializeConversationHistory()
+            // 復元フラグをチェックして、初期化をスキップする
+            val restoreFlag = activity?.intent?.getBooleanExtra("restoreFlag", false) ?: false
+            if (!restoreFlag) {
+                textOutput.text = "ここに会話が記録されます\n"
+                initializeConversationHistory()
+            }
         }
 
         startButton.isEnabled = false
@@ -188,6 +206,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
                 if (!matches.isNullOrEmpty()) {
                     recognizedText = matches[0]
                     textOutput.append("\nあなた: $recognizedText\n")
+                    scrollToBottom()
                     if (recognizedText.contains("またね")) {
                         endConversation()
                     } else {
@@ -223,6 +242,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         startButton.isEnabled = true
         stopButton.isEnabled = false
         speechRecognizer?.stopListening()
+        activity?.intent?.removeExtra("restoreFlag")
     }
 
     private fun sendToGPT(text: String) {
@@ -259,6 +279,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
                     if (content != null) {
                         activity?.runOnUiThread {
                             textOutput.append("\n$gptName: $content\n")
+                            scrollToBottom()
                             conversationHistory.add(
                                 mapOf(
                                     "role" to "assistant",
@@ -275,6 +296,12 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
                 }
             }
         })
+    }
+
+    private fun scrollToBottom() {
+        scrollView.post {
+            scrollView.fullScroll(View.FOCUS_DOWN)
+        }
     }
 
     private fun synthesizeSpeechWithSBV2(text: String) {
@@ -358,10 +385,18 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         builder.show()
     }
 
+    private fun restoreConversation(conversationHistoryJson: String, filePath: String) {
+        val loadedHistory: List<Map<String, String>> = Gson().fromJson(conversationHistoryJson, object : TypeToken<List<Map<String, String>>>() {}.type)
+        conversationHistory.clear()
+        conversationHistory.addAll(loadedHistory)
+        restoreTextOutput(File(filePath))
+    }
+
     fun restoreTextOutput(file: File) {
         try {
             val content = file.readText()
             textOutput.text = content
+            scrollToBottom()
         } catch (e: Exception) {
             e.printStackTrace()
         }
