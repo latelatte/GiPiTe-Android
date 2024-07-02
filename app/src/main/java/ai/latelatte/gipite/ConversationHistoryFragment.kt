@@ -21,6 +21,7 @@ class ConversationHistoryFragment : Fragment() {
     private var selectedFiles: MutableList<File> = mutableListOf()
     private lateinit var fabSelectMode: FloatingActionButton
     private lateinit var fabDelete: FloatingActionButton
+    private lateinit var adapter: ArrayAdapter<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +41,10 @@ class ConversationHistoryFragment : Fragment() {
         }
 
         listView.setOnItemLongClickListener { _, _, position, _ ->
-            showRenameAlert(conversationFiles[position])
+            if (!isSelecting) {
+                showRenameAlert(conversationFiles[position])
+            }
+            toggleSelection(position)
             true
         }
 
@@ -68,7 +72,7 @@ class ConversationHistoryFragment : Fragment() {
         }?.toMutableList() ?: mutableListOf()
 
         val fileNames = conversationFiles.map { it.nameWithoutExtension }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_multiple_choice, fileNames)
+        adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, fileNames)
         listView.adapter = adapter
         listView.choiceMode = ListView.CHOICE_MODE_NONE
     }
@@ -93,18 +97,20 @@ class ConversationHistoryFragment : Fragment() {
 
     private fun enterSelectionMode() {
         isSelecting = true
-        fabSelectMode.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+        fabSelectMode.setImageResource(R.drawable.ic_cancel)
         fabDelete.visibility = View.VISIBLE
         listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        updateAdapterForSelectionMode()
     }
 
     private fun exitSelectionMode() {
         isSelecting = false
         selectedFiles.clear()
-        fabSelectMode.setImageResource(android.R.drawable.ic_menu_agenda)
+        fabSelectMode.setImageResource(R.drawable.ic_select)
         fabDelete.visibility = View.GONE
         listView.clearChoices()
         listView.choiceMode = ListView.CHOICE_MODE_NONE
+        updateAdapterForSelectionMode()
     }
 
     private fun updateFabDeleteVisibility() {
@@ -160,5 +166,15 @@ class ConversationHistoryFragment : Fragment() {
             file.renameTo(newFile)
             loadConversationFiles()
         }
+    }
+
+    private fun updateAdapterForSelectionMode() {
+        val fileNames = conversationFiles.map { it.nameWithoutExtension }
+        val updatedAdapter = if (isSelecting) {
+            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_multiple_choice, fileNames)
+        } else {
+            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, fileNames)
+        }
+        listView.adapter = updatedAdapter
     }
 }
