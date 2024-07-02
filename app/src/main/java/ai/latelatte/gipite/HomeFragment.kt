@@ -1,5 +1,6 @@
 package ai.latelatte.gipite
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,10 +14,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ScrollView
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.ScrollView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
@@ -30,8 +34,7 @@ import java.util.*
 
 class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
 
-    private lateinit var startButton: Button
-    private lateinit var stopButton: Button
+    private lateinit var conversationButton: ImageButton
     private lateinit var statusLabel: TextView
     private lateinit var textOutput: TextView
     private lateinit var saveConversationButton: Button
@@ -48,7 +51,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // 初期設定の変数
     private var apiKey: String = ""
-    private var gptModel: String = ""
+    private var gptModel: String = "gpt-4o" // モデルを固定
     private var gptName: String = ""
     private var systemMessage: MutableMap<String, String> = mutableMapOf()
 
@@ -61,8 +64,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        startButton = view.findViewById(R.id.startButton)
-        stopButton = view.findViewById(R.id.stopButton)
+        conversationButton = view.findViewById(R.id.conversationButton)
         statusLabel = view.findViewById(R.id.statusLabel)
         textOutput = view.findViewById(R.id.textOutput)
         saveConversationButton = view.findViewById(R.id.saveConversationButton)
@@ -74,19 +76,17 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         configureUI()
         loadSettings()
 
-        startButton.setOnClickListener {
-            startRecognition()
-        }
-
-        stopButton.setOnClickListener {
-            stopRecognition()
+        conversationButton.setOnClickListener {
+            if (isConversationActive) {
+                endConversation()
+            } else {
+                startRecognition()
+            }
         }
 
         saveConversationButton.setOnClickListener {
             promptForFileNameAndSave()
         }
-
-        // 会話履歴がある場合に復元
         val conversationHistoryJson = activity?.intent?.getStringExtra("conversationHistory")
         val filePath = activity?.intent?.getStringExtra("fileURL")
         val restoreFlag = activity?.intent?.getBooleanExtra("restoreFlag", false) ?: false
@@ -97,24 +97,35 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
             initializeConversationHistory()
         }
 
+        animateCharacter()
+
         return view
     }
 
     private fun configureUI() {
-        startButton.text = "会話を始める！"
-        stopButton.text = "会話を終える！"
-        statusLabel.text = "準備完了"
+        statusLabel.text = "準備完了！"
+        saveConversationButton.visibility = View.GONE
+        updateButtonState()
     }
 
     private fun loadSettings() {
         val prefs = activity?.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
         apiKey = prefs?.getString("apiKey", "") ?: ""
-        gptModel = prefs?.getString("model", "") ?: ""
         systemMessage["role"] = "system"
         systemMessage["content"] = prefs?.getString("systemMessage", "") ?: ""
         gptName = prefs?.getString("gptName", gptModel) ?: gptModel
 
         Log.d("HomeFragment", "API Key: $apiKey")
+    }
+
+    private fun animateCharacter() {
+        val animator = ObjectAnimator.ofFloat(conversationButton, "translationY", -20f, 20f).apply {
+            duration = 2000
+            interpolator = LinearInterpolator()
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }
+        animator.start()
     }
 
     override fun onInit(status: Int) {
@@ -152,8 +163,8 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
             }
         }
 
-        startButton.isEnabled = false
-        stopButton.isEnabled = true
+        updateButtonState()
+        saveConversationButton.visibility = View.GONE
         statusLabel.text = "音声認識を開始しました…"
 
         startSpeechRecognition()
@@ -223,26 +234,22 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         speechRecognizer?.startListening(intent)
     }
 
-    private fun cancelRecognition() {
-        if (isRecognitionActive) {
-            speechRecognizer?.cancel()
-            isRecognitionActive = false
-            statusLabel.text = "音声認識をキャンセルしました。"
-        }
-    }
-
-    private fun stopRecognition() {
-        endConversation()
-    }
-
     private fun endConversation() {
         isConversationActive = false
         isRecognitionActive = false
         statusLabel.text = "会話を終了しました。"
-        startButton.isEnabled = true
-        stopButton.isEnabled = false
+        updateButtonState()
+        saveConversationButton.visibility = View.VISIBLE
         speechRecognizer?.stopListening()
         activity?.intent?.removeExtra("restoreFlag")
+    }
+
+    private fun updateButtonState() {
+        if (isConversationActive) {
+            conversationButton.setImageResource(R.drawable.character_image) // 終了状態の画像
+        } else {
+            conversationButton.setImageResource(R.drawable.character_image) // 開始状態の画像
+        }
     }
 
     private fun sendToGPT(text: String) {
@@ -402,3 +409,4 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         }
     }
 }
+

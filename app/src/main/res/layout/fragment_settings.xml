@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorSecondary"
     tools:context=".SettingsFragment">
 
     <LinearLayout
@@ -13,75 +14,90 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="APIキー" />
+
         <EditText
             android:id="@+id/apiKeyTextField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="API Key" />
+            android:inputType="textPassword" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="GPTの名前" />
 
         <EditText
             android:id="@+id/gptNameTextField"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="GPT Name" />
+            android:textSize="12sp"
+            android:text="GPTの設定" />
 
         <EditText
             android:id="@+id/gptSettingsTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="System Message" />
-
-        <LinearLayout
-            android:id="@+id/buttonContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
-            android:paddingTop="16dp">
-
-            <Button
-                android:id="@+id/gpt4Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="GPT-4" />
-
-            <Button
-                android:id="@+id/gpt35Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="GPT-3.5" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/pasteButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Paste API Key" />
+            android:layout_height="200dp"
+            android:textSize="13sp"
+            android:gravity="top|start"
+            android:hint="GPTにどの様に振る舞ってほしいか等の指示を入力してください。"
+            android:inputType="textMultiLine" />
 
         <Button
             android:id="@+id/saveButton"
-            android:layout_width="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Save Settings" />
+            android:backgroundTint="@color/editor_purple"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:text="保存" />
 
         <Button
             android:id="@+id/clearButton"
-            android:layout_width="match_parent"
+            android:layout_marginTop="13dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Clear Settings" />
+            android:backgroundTint="@color/editor_pink"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:text="クリア" />
 
         <Button
             android:id="@+id/loadPresetButton"
-            android:layout_width="match_parent"
+            android:layout_marginTop="13dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Load Preset" />
+            android:backgroundTint="@color/editor_green"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:text="プリセットをロード/削除" />
 
         <Button
             android:id="@+id/savePresetButton"
-            android:layout_width="match_parent"
+            android:layout_marginTop="13dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Save Preset" />
+            android:backgroundTint="@color/editor_purple"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:text="プリセットを保存" />
     </LinearLayout>
 </ScrollView>

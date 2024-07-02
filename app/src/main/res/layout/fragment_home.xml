@@ -2,28 +2,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/colorSecondary">
 
-    <Button
-        android:id="@+id/startButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="会話を始める！" />
-
-    <Button
-        android:id="@+id/stopButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="会話を終える！"
-        android:enabled="false" />
+    <ImageButton
+        android:id="@+id/conversationButton"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/character_image"
+        android:contentDescription="キャラクター画像"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"/>
 
     <TextView
         android:id="@+id/statusLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="準備完了"
-        android:textSize="10dp"
-        android:gravity="center_horizontal" />
+        android:text="準備完了！"
+        android:textSize="16dp"
+        android:gravity="center_horizontal"
+        android:textColor="@color/textColor"
+        android:textStyle="bold"
+        android:padding="16dp"/>
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -36,15 +38,23 @@
             android:id="@+id/textOutput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:background="#EEEEEE"
-            android:padding="16dp" />
+            android:textSize="14dp"
+            android:padding="10dp"
+            android:lineSpacingExtra="8dp"
+            android:lineSpacingMultiplier="0.5"
+            android:textColor="@color/textColor"
+            android:text="ここに会話が記録されます：" />
     </ScrollView>
 
     <Button
         android:id="@+id/saveConversationButton"
-        android:layout_width="match_parent"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/buttonColor"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/buttonTextColor"
+        android:textStyle="bold"
         android:text="会話を保存" />
 
 </LinearLayout>
