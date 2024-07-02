@@ -317,7 +317,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
 
-        val sbv2Synthesizer = StyleBertVITS2Synthesizer()
+        val sbv2Synthesizer = StyleBertVITS2Synthesizer(requireContext())
         sbv2Synthesizer.onAudioPlaybackFinished = {
             activity?.runOnUiThread {
                 if (isConversationActive) {
