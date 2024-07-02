@@ -45,6 +45,7 @@ class ConversationHistoryFragment : Fragment() {
                 showRenameAlert(conversationFiles[position])
             }
             toggleSelection(position)
+            exitSelectionMode()
             true
         }
 

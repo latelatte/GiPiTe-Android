@@ -32,21 +32,23 @@
             android:exported="true" />
 
         <activity
-            android:name=".ConversationHistoryViewController"
+            android:name=".HomeFragment"
             android:exported="true"
-            android:label="Conversation History">
-        </activity>
+            android:label="Home"/>
+
+        <activity
+            android:name=".ConversationHistoryFragment"
+            android:exported="true"
+            android:label="Conversation History"/>
 
         <activity android:name=".ConversationDetailViewController"
             android:exported="true"
-            android:label="Conversation Detail">
-        </activity>
+            android:label="Conversation Detail"/>
 
         <activity
-            android:name=".SettingsViewController"
+            android:name=".SettingsFragment"
             android:exported="true"
-            android:label="Settings">
-        </activity>
+            android:label="Settings"/>
 
     </application>
 
