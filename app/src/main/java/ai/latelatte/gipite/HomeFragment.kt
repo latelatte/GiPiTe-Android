@@ -15,12 +15,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.ScrollView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
@@ -163,6 +163,8 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
             }
         }
 
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         updateButtonState()
         saveConversationButton.visibility = View.GONE
         statusLabel.text = "音声認識を開始しました…"
@@ -181,10 +183,7 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         isRecognitionActive = true
 
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-            )
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         }
 
@@ -242,6 +241,8 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
         saveConversationButton.visibility = View.VISIBLE
         speechRecognizer?.stopListening()
         activity?.intent?.removeExtra("restoreFlag")
+
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun updateButtonState() {
@@ -312,20 +313,31 @@ class HomeFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     private fun synthesizeSpeechWithSBV2(text: String) {
+        activity?.runOnUiThread {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
         val sbv2Synthesizer = StyleBertVITS2Synthesizer()
         sbv2Synthesizer.onAudioPlaybackFinished = {
-            if (isConversationActive) {
-                startRecognition()
+            activity?.runOnUiThread {
+                if (isConversationActive) {
+                    startRecognition()
+                }
+                activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
         }
         sbv2Synthesizer.synthesizeSpeech(text) { error ->
-            if (error == null) {
-                onSpeechSynthesisFinished()
-            } else {
-                Log.e("SBV2", "Error in synthesis: ${error.message}")
+            activity?.runOnUiThread {
+                if (error == null) {
+                    onSpeechSynthesisFinished()
+                } else {
+                    Log.e("SBV2", "Error in synthesis: ${error.message}")
+                    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
             }
         }
     }
+
 
     private fun onSpeechSynthesisFinished() {
         Log.d("HomeFragment", "Speech synthesis finished")
